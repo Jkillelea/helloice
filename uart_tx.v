@@ -20,10 +20,10 @@ module uart_tx (
     reg        Tx_Dv       = 0;
     reg [7:0]  Tx_Byte     = 0;
     reg        Tx_Data     = 0;
-    reg        Done        = 0;
+    reg        Done        = 1;
     reg [2:0]  State       = IDLE;
 
-    always @(posedge SER_CLK) begin
+    always @(posedge SER_CLK && Done) begin
         Tx_Dv   <= TX_DV;
     end
 
@@ -31,7 +31,7 @@ module uart_tx (
         case (State)
             IDLE: begin
                 Tx_Data <= 1; // idle high
-                Done    <= 0; // done = 0
+                // Done    <= 0; // done = 0
 
                 if (Tx_Dv == 1) begin // read in byte
                     Tx_Byte <= TX_BYTE;
@@ -41,6 +41,7 @@ module uart_tx (
 
             START: begin
                 Tx_Data <= 0; // drive low for start bit
+                Done    <= 0; // done = 0
 
                 if (Clock_Count < CLKS_PER_BIT -1) begin
                     Clock_Count <= Clock_Count + 1;
@@ -51,7 +52,7 @@ module uart_tx (
                     State       <= DATA;
                 end
             end // START
-                
+
             DATA: begin
                 Tx_Data <= Tx_Byte[Bit_Idx]; // put bit on wire
 
@@ -70,7 +71,7 @@ module uart_tx (
                     end
                 end
             end // DATA
-                
+
             STOP: begin
                 Tx_Data <= 1;
 
@@ -83,20 +84,20 @@ module uart_tx (
                     State       <= CLEANUP;
                 end
             end // STOP
-                
+
             CLEANUP: begin
-                Done    <= 0;
-                State   <= IDLE;
+                Done    <= 1;
                 Bit_Idx <= 0;
+                State   <= IDLE;
             end // CLEANUP
 
             default: begin
                 State <= IDLE;
             end // default
-                
         endcase
     end
 
     assign TX_DATA = Tx_Data;
     assign DONE    = Done;
 endmodule
+

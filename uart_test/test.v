@@ -1,4 +1,6 @@
 `timescale 1ns / 10ps
+// `include "uart_tx.v"
+// `include "uart_rx.v"
 
 module test();
 
@@ -28,7 +30,6 @@ module test();
       #(c_BIT_PERIOD);
       #1000;
 
-
       // Send Data Byte
       for (ii=0; ii<8; ii=ii+1)
         begin
@@ -50,8 +51,13 @@ module test();
      .RX_BYTE(w_Rx_Byte)
      );
 
-  uart_tx #(.CLKS_PER_BIT(c_CLKS_PER_BIT)) UART_TX_INST
-    (.SER_CLK(r_Clock),
+  // uart_tx #(.CLKS_PER_BIT(c_CLKS_PER_BIT)) UART_TX_INST
+  //   (.SER_CLK(r_Clock),
+  //    .TX_DV(r_Tx_DV),
+  //    .TX_BYTE(r_Tx_Byte),
+  //    .TX_DATA(),
+  uart_tx2 #(.CLKS_PER_BIT(c_CLKS_PER_BIT)) UART_TX_INST
+    (.CLK(r_Clock),
      .TX_DV(r_Tx_DV),
      .TX_BYTE(r_Tx_Byte),
      .TX_DATA(),
@@ -71,7 +77,7 @@ module test();
       @(posedge r_Clock);
       @(posedge r_Clock);
       r_Tx_DV <= 1'b1;
-      r_Tx_Byte <= 8'hAB;
+      r_Tx_Byte <= 8'b10101010;
       @(posedge r_Clock);
       r_Tx_DV <= 1'b0;
       @(posedge w_Tx_Done);
@@ -82,10 +88,15 @@ module test();
       @(posedge r_Clock);
 
       // Check that the correct command was received
-      if (w_Rx_Byte == 8'h3F)
+      if (w_Rx_Byte == 8'h3F) begin
         $display("Test Passed - Correct Byte Received");
-      else
+      end
+      else begin
         $display("Test Failed - Incorrect Byte Received");
+      end
 
+      #1000
+      $finish;
     end
+
 endmodule
