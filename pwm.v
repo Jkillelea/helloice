@@ -5,8 +5,8 @@ module PWM (
     input [7:0] level,
     output      out
 );
-    localparam WIDTH = 24; // counter register width
-    reg [WIDTH-1:0] counter;
+    parameter COUNTER_BITS = 24; // counter register width
+    reg [COUNTER_BITS-1:0] counter;
 
     // generate a triangle wave
     always @(posedge clk) begin
