@@ -47,9 +47,7 @@ module UART_Blink(
     wire       tx_data;
     wire       tx_done;
 
-    wire rx_ahead;
-    assign rx_ahead = (ram_write_addr > ram_read_addr);
-    assign tx_byte  = ram_dout;
+    assign tx_byte = ram_dout;
 
     uart_tx2 #(.UART_BAUD(9600)) tx(
         ICE_CLK,
@@ -59,16 +57,17 @@ module UART_Blink(
         tx_done
     );
 
+    // store uart to ram in sequential locations
     always @(posedge rx_dv) begin
         ram_write_addr <= ram_write_addr + 1;
     end
 
+    // write ram back out to uart
     always @(posedge ICE_CLK) begin
-        if ((ram_write_addr >= ram_read_addr)) begin // write > read -> read++, tx action
+        if ((ram_write_addr >= ram_read_addr)) begin // write >= read -> read++, tx action
             ram_read_addr <= ram_read_addr + 1;
             tx_dv <= 1;
-        end else begin                               // write <= read -> nothing
-            // nothing
+        end else begin                               // write < read -> nothing
             tx_dv <= 0;
         end
     end
@@ -76,12 +75,4 @@ module UART_Blink(
     assign UART_TX = tx_data;
     assign J3_9    = UART_TX;
     assign J3_10   = tx_dv;
-
-    // reg [8:0] addr_difference;
-    // assign addr_difference = ram_write_addr - ram_read_addr;
-    // assign RLED1 = addr_difference[0];
-    // assign RLED2 = addr_difference[1];
-    // assign RLED3 = addr_difference[2];
-    // assign RLED4 = addr_difference[3];
-    // assign GLED5 = addr_difference[4];
 endmodule
