@@ -13,18 +13,16 @@ module top(
     output RLED4
 );
     // `include "vfd_bits.v"
-    parameter DISPLAY_BITS = 32;
 
-    reg [DISPLAY_BITS-1:0] vfd_data;
-    reg [DISPLAY_BITS-1:0] tmp = 0;
+    parameter DISPLAY_BITS = 25;
+
+    reg [DISPLAY_BITS-1:0] vfd_data = 0;
     reg        data_valid;
     wire       shift_busy;
 
-    assign vfd_data = ~tmp;
-
     always @(posedge ICE_CLK) begin
         if (!shift_busy && !data_valid) begin
-            tmp        <= tmp + 1;
+            vfd_data   <= vfd_data + 1;
             data_valid <= 1;
         end
         else begin
@@ -33,9 +31,9 @@ module top(
     end
 
     shiftout #(
-        .FREQUENCY(10), .DATA_WIDTH(DISPLAY_BITS)
+        .FREQUENCY(1_000_000), .DATA_WIDTH(DISPLAY_BITS)
     ) shitfout_inst (
-        ICE_CLK, vfd_data, data_valid, SHIFT_LATCH, SHIFT_CLOCK, SHIFT_DATA, shift_busy
+        ICE_CLK, ~vfd_data, data_valid, SHIFT_LATCH, SHIFT_CLOCK, SHIFT_DATA, shift_busy
     );
 
     assign GLED5 = !shift_busy;
