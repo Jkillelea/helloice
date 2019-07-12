@@ -1,6 +1,9 @@
 `default_nettype none
 `timescale 1 ns / 1 ps
 
+// Shift register interface
+// Currently, this only supports LSB-first output
+// From 1 Hz to about 3-4 MHz on a 12 MHz clock
 module shiftout(
     input                   CLK,
     input  [DATA_WIDTH-1:0] IN_DATA,
@@ -79,19 +82,18 @@ module shiftout(
                 // wait until halfway through the bit period
                 if (clock_count >= CLKS_PER_BIT/2 - 1) begin
                     shift_clock <= 1;
+                end
 
-                    // at the end of the clock period
-                    if (clock_count >= CLKS_PER_BIT - 1) begin
-                        clock_count <= 0;
+                // at the end of the clock period
+                if (clock_count >= CLKS_PER_BIT - 1) begin
+                    clock_count <= 0;
 
-                        // if there's more bits to shift out, do so
-                        if (bit_idx < DATA_WIDTH-1) begin
-                            bit_idx <= bit_idx + 1;
-                            // state   <= DATA;
-                        end
-                        else begin // else, we're done here
-                            state <= STOP;
-                        end
+                    // if there's more bits to shift out, do so
+                    if (bit_idx < DATA_WIDTH - 1) begin
+                        bit_idx <= bit_idx + 1;
+                    end
+                    else begin // else, we're done here
+                        state <= STOP;
                     end
                 end
             end
