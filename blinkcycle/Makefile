@@ -1,4 +1,4 @@
-SOURCES = top.v shiftout.v
+SOURCES = top.v pwm.v
 PCF = icestick.pcf
 DEV = 1k # HX-1k
 

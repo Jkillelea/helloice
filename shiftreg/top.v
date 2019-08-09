@@ -14,10 +14,10 @@ module top(
 );
     // `include "vfd_bits.v"
 
-    parameter DISPLAY_BITS = 25;
+    parameter DISPLAY_BITS = 8;
 
     reg [DISPLAY_BITS-1:0] vfd_data = 0;
-    reg        data_valid;
+    reg        data_valid = 1;
     wire       shift_busy;
 
     always @(posedge ICE_CLK) begin

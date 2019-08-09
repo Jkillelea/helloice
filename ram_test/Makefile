@@ -4,9 +4,9 @@ gtkwave: test.vcd
 test.vcd: design
 	vvp $<
 
-design: test.v counter.v pwm.v uart_rx.v
+design: test.v ram.v uart_rx.v uart_tx2.v
 	iverilog -o $@ $^
 
 clean:
-	rm -f test.vcd
 	rm -f design
+	rm -f test.vcd
