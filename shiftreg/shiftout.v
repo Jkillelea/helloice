@@ -35,10 +35,10 @@ module shiftout(
     reg                  shift_clock  = 0;
     reg                  shift_data   = 0;
     reg                  busy         = 0;
-    reg [31:0]           clock_count  = 0;
+    reg           [31:0] clock_count  = 0;
     reg [DATA_WIDTH-1:0] data         = 0;
     reg [DATA_WIDTH-1:0] bit_idx      = 0; // this register could be a lot smaller
-    reg  [2:0]           state        = IDLE;
+    reg            [2:0] state        = IDLE;
 
 
     // latch in new data
