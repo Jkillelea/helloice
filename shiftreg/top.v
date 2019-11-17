@@ -31,7 +31,7 @@ module top(
     end
 
     shiftout #(
-        .FREQUENCY(2_500_000), .DATA_WIDTH(DISPLAY_BITS)
+        .FREQUENCY(1_000_000), .DATA_WIDTH(DISPLAY_BITS)
     ) shitfout_inst (
         ICE_CLK, ~vfd_data, data_valid, SHIFT_LATCH, SHIFT_CLOCK, SHIFT_DATA, shift_busy
     );

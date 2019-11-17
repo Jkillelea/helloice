@@ -1,8 +1,8 @@
 set_io ICE_CLK 21
 
-set_io SHIFT_LATCH 112
-set_io SHIFT_CLOCK 113
-set_io SHIFT_DATA  114
+set_io SHIFT_LATCH 62
+set_io SHIFT_CLOCK 61
+set_io SHIFT_DATA  60
  
 set_io GLED5 95
 set_io RLED4 96
