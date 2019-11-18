@@ -66,7 +66,7 @@ module tb();
     wire rled3;
     wire rled4;
 
-    UART_Blink top_inst(
+    UART_Mirror top_inst (
         clk, uart_rx, uart_tx,
         j3_10, j3_9, j3_8,
         gled5, rled1, rled2, rled3, rled4
