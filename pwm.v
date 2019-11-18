@@ -14,5 +14,5 @@ module PWM (
     end
 
     // comparitor
-    assign out = (counter[7:0] > level);
+    assign out = counter[7:0] > level;
 endmodule

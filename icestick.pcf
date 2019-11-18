@@ -28,5 +28,5 @@ set_io J3_9 45
 # set_io J1_9 118
 # set_io J1_10 119
 
-set_io UART_TX 8
-set_io UART_RX 9
+# set_io UART_TX 8
+# set_io UART_RX 9

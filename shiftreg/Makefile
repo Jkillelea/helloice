@@ -20,8 +20,7 @@ upload: $(MAIN).bin
 
 # Simulation
 .PHONY: sim
-sim:
-	$(MAKE) gtkwave
+sim: test.vcd
 
 .PHONY: gtkwave
 gtkwave: test.vcd
