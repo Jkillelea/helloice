@@ -1,4 +1,4 @@
-SOURCES = uart_blink.v uart_tx2.v uart_rx.v ram.v
+SOURCES = uart_mirror.v uart_tx2.v uart_rx.v ram.v
 PCF = icestick.pcf
 DEV = 1k # HX-1k
 

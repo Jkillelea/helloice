@@ -1,7 +1,7 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-module UART_Blink(
+module UART_Mirror (
     input  ICE_CLK,
     input  UART_RX,
     output UART_TX,
@@ -15,8 +15,9 @@ module UART_Blink(
     output RLED4
 );
 
-    wire       rx_dv;
-    wire [7:0] rx_byte;
+    // UART RX wires
+    wire       rx_dv;   // data valid (conversion done)
+    wire [7:0] rx_byte; // rx data
 
     uart_rx #(.UART_BAUD(9600)) rx(
         ICE_CLK,
@@ -25,28 +26,30 @@ module UART_Blink(
         rx_byte
     );
 
-    wire [7:0] ram_din;
-    reg  [8:0] ram_write_addr = 0;
-    wire       ram_write_en;
-    reg  [8:0] ram_read_addr  = 0;
-    wire [7:0] ram_dout;
+    // RAM wires
+    wire [7:0] ram_din;            // data input
+    reg  [8:0] ram_write_addr = 0; // addr to write to
+    wire       ram_write_en;       // write enable
+    reg  [8:0] ram_read_addr  = 0; // addr to read from
+    wire [7:0] ram_dout;           // data outptut (data at read location)
 
     assign ram_din      = rx_byte;
     assign ram_write_en = rx_dv;
 
     ram ram_inst (
-        ram_din,
-        ram_write_addr,
-        ram_write_en,
         ICE_CLK,
+        ram_write_addr,
+        ram_din,
+        ram_write_en,
         ram_read_addr,
         ram_dout
     );
 
-    reg        tx_dv;
-    wire [7:0] tx_byte;
-    wire       tx_data;
-    wire       tx_done;
+    // UART TX wires
+    reg        tx_dv;   // data valid (send this data out)
+    wire [7:0] tx_byte; // data to send
+    wire       tx_data; // UART TX line
+    wire       tx_done; // done sending
 
     assign tx_byte = ram_dout;
 
@@ -79,13 +82,13 @@ module UART_Blink(
     end
 
     assign UART_TX = tx_data;
-    assign J3_10   = tx_dv;
-    assign J3_9    = UART_TX;
-    assign J3_8    = UART_RX;
+    // assign J3_10   = tx_dv;
+    // assign J3_9    = UART_TX;
+    // assign J3_8    = UART_RX;
 
     assign GLED5 = ~UART_TX;
-    assign RLED1 = ram_write_addr[8];
-    assign RLED2 = ram_write_addr[7];
-    assign RLED3 = ram_write_addr[6];
-    assign RLED4 = ram_write_addr[5];
+    // assign RLED1 = tx_byte[7];
+    // assign RLED2 = tx_byte[6];
+    // assign RLED3 = tx_byte[5];
+    // assign RLED4 = tx_byte[4];
 endmodule
