@@ -2,33 +2,33 @@
 `define _VFD_PINS_H_
 
 // segments
-parameter A = (1 << 0 );
-parameter B = (1 << 2 );
-parameter C = (1 << 9 );
-parameter D = (1 << 14);
-parameter E = (1 << 21);
-parameter F = (1 << 24);
-parameter G = (1 << 4 );
-parameter H = (1 << 3 );
-parameter I = (1 << 7 );
-parameter J = (1 << 15);
-parameter K = (1 << 17);
-parameter L = (1 << 20);
-parameter M = (1 << 22);
-parameter N = (1 << 6 );
-parameter O = (1 << 12);
-parameter P = (1 << 18);
+parameter A  = (1 << 31);
+parameter B  = (1 << 29);
+parameter C  = (1 << 22);
+parameter D  = (1 << 17);
+parameter E  = (1 << 10);
+parameter F  = (1 <<  7);
+parameter G  = (1 << 27);
+parameter H  = (1 << 28);
+parameter I  = (1 << 24);
+parameter J  = (1 << 16);
+parameter K  = (1 << 14);
+parameter L  = (1 << 11);
+parameter M  = (1 <<  9);
+parameter N  = (1 << 25);
+parameter O  = (1 << 19);
+parameter P  = (1 << 13);
 
 // grids
-parameter G1 = (1 << 23);
-parameter G2 = (1 << 19);
-parameter G3 = (1 << 16);
-parameter G4 = (1 << 13);
-parameter G5 = (1 << 11);
-parameter G6 = (1 << 10);
-parameter G7 = (1 << 8 );
-parameter G8 = (1 << 5 );
-parameter G9 = (1 << 1 );
+parameter G1 = (1 <<  8);
+parameter G2 = (1 << 12);
+parameter G3 = (1 << 15);
+parameter G4 = (1 << 18);
+parameter G5 = (1 << 20);
+parameter G6 = (1 << 21);
+parameter G7 = (1 << 23);
+parameter G8 = (1 << 26);
+parameter G9 = (1 << 30);
 
 // letters
 parameter letter_a = (A | B | C | E | F | I | M);

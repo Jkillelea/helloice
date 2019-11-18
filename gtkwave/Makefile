@@ -6,3 +6,7 @@ test.vcd: design
 
 design: test.v counter.v pwm.v uart_rx.v
 	iverilog -o $@ $^
+
+clean:
+	rm -f test.vcd
+	rm -f design

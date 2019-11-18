@@ -1,8 +1,4 @@
 set_io ICE_CLK 21
-
-set_io SHIFT_LATCH 62
-set_io SHIFT_CLOCK 61
-set_io SHIFT_DATA  60
  
 set_io GLED5 95
 set_io RLED4 96
@@ -11,8 +7,8 @@ set_io RLED2 98
 set_io RLED1 99
 
 # set_io J3_10 44
-# set_io J3_9 45
-# set_io J3_8 47
+set_io J3_9 45
+set_io J3_8 47
 # set_io J3_7 48
 # set_io J3_6 56
 # set_io J3_5 60
@@ -32,5 +28,5 @@ set_io RLED1 99
 # set_io J1_9 118
 # set_io J1_10 119
 
-# set_io UART_TX 8
-# set_io UART_RX 9
+set_io UART_TX 8
+set_io UART_RX 9
