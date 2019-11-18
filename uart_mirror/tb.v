@@ -48,7 +48,7 @@ module tb();
         uart_rx = 1; // stop bit
         #BITPER; // 105 us
 
-        #10_000_000; // 10 ms
+        #5_000_000; // 5 ms
         $finish;
     end
 
