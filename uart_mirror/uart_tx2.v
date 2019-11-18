@@ -21,10 +21,12 @@ module uart_tx2 (
 
     // If new data available and done sending copy it in
     always @(posedge CLK) begin
-        // if (TX_DV) begin
-        //     Tx_Byte <= TX_BYTE;
-        // end
-        Tx_Byte <= TX_BYTE;
+        if (TX_DV) begin
+            Tx_Byte <= TX_BYTE;
+        end
+        else begin
+            Tx_Byte <= Tx_Byte;
+        end
     end
 
     reg [7:0]  Tx_Byte     = 0;
