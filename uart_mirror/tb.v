@@ -31,7 +31,7 @@ module tb();
             // Start bit
             uart_rx = 0;
             #BITPER;
-            for (i = 0; i < 8; i++) begin
+            for (i = 0; i < 8; i = i + 1) begin
                 uart_rx = byte[i];
                 #BITPER;
             end
