@@ -1,0 +1,1 @@
+../uart_mirror/uart_tx2.v
