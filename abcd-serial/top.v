@@ -4,13 +4,18 @@
 module top (
     input  ICE_CLK,
     input  UART_RX,
-    output UART_TX
+    output UART_TX,
+    output RLED1,
+    output RLED2,
+    output RLED3,
+    output RLED4,
+    output GLED5
 );
 
     // UART TX wires
-    reg        tx_dv;   // data valid (send this data out)
-    reg  [7:0] tx_byte = 64;  // data to send
-    wire       tx_done;       // done sending
+    wire       tx_dv;   // data valid (send this data out)
+    reg  [7:0] tx_byte; // data to send
+    wire       tx_done; // done sending
 
     assign tx_dv = tx_done;
 
@@ -22,26 +27,30 @@ module top (
         .DONE(tx_done)
     );
 
-    reg [5:0] posoff = 0;
+    wire [3:0] leds = {RLED1, RLED2, RLED3, RLED4};
+    assign leds = tx_byte[6:3];
+    assign GLED5 = !UART_TX;
+
+    reg [6:0] posoff = 0;
     parameter START = "0";
 
-    always @(posedge ICE_CLK) begin
-        if (tx_done) begin
-            if (START + posoff < tx_byte) begin
-                tx_byte <= 10;
-                if (posoff == 61)
-                    posoff <= 0;
-                else
-                    posoff <= posoff + 1;
+    // generate ascii sawtooth
+    always @(posedge tx_done) begin
+        // end of line
+        if (tx_byte > START + posoff) begin
+            tx_byte <= "\n";
 
-            end
-            else if (tx_byte == 10) begin
-                // tx_byte <= 65;
-                tx_byte <= START;
-            end
-            else begin
-                tx_byte <= tx_byte + 1;
-            end
+            // last sawtooth
+            if (posoff == "z" - "1") // reset position offset
+                posoff <= 0;
+            else
+                posoff <= posoff + 1;
+        end
+        else if (tx_byte == "\n") begin // restart at START char
+            tx_byte <= START;
+        end
+        else begin // print next in sequence
+            tx_byte <= tx_byte + 1;
         end
     end
 

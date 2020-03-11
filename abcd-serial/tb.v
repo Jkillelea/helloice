@@ -20,7 +20,7 @@ module tb();
     wire rled4;
 
     top top_inst (
-        clk, uart_rx, uart_tx
+        clk, uart_rx, uart_tx, rled1, rled2, rled3, rled4, gled5
     );
 
     // task uart_signal (input [7:0] byte);
