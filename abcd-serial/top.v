@@ -13,6 +13,14 @@ module top (
     output OUT106
 );
 
+    wire pll_clk_50m;
+    wire pll_locked;
+    pll PLL_50MHz(
+        .clock_in(ICE_CLK),
+        .clock_out(pll_clk_50m),
+        .locked(pll_locked)
+    );
+
     // UART TX wires
     wire       tx_dv;   // data valid (send this data out)
     reg  [7:0] tx_byte; // data to send
@@ -20,8 +28,12 @@ module top (
 
     assign tx_dv = tx_done;
 
-    uart_tx2 #(.UART_BAUD(9600)) tx (
-        .CLK(ICE_CLK),
+    uart_tx2 #(
+        .F_CLK(50_000_000),
+        .UART_BAUD(921600)
+    )
+    tx (
+        .CLK(pll_clk_50m),
         .TX_DV(tx_dv),
         .TX_BYTE(tx_byte),
         .TX_DATA(UART_TX),
