@@ -6,7 +6,7 @@ set_io RLED3 97
 set_io RLED2 98
 set_io RLED1 99
 
-# set_io J3_10 44
+set_io J3_10 44
 set_io J3_9 45
 set_io J3_8 47
 # set_io J3_7 48

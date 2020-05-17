@@ -34,7 +34,7 @@ design: tb.v $(SOURCES)
 
 .PHONY: clean
 clean:
-	rm -f *.txt
+	rm -f top.txt
 	rm -f *.blif
 	rm -f *.bin
 	rm -f design

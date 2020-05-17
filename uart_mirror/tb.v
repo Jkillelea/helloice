@@ -51,8 +51,11 @@ module tb();
         uart_signal(8'h02);
         uart_signal(8'h03);
         uart_signal(8'h04);
+        uart_signal(8'h05);
+        uart_signal(8'h06);
+        uart_signal("h");
 
-        uart_signal(8'h0D);
+        // uart_signal(8'h0D);
         // // clock out 0x0D
         // uart_rx = 0; // start bit
         // #BITPER;
@@ -71,7 +74,7 @@ module tb();
         // uart_rx = 1; // stop bit
         // #BITPER;
 
-        uart_signal(8'h0A);
+        // uart_signal(8'h0A);
         // // send 0x0A
         // uart_rx = 0; // start bit
         // #BITPER; // 105 us
