@@ -8,10 +8,16 @@ module uart_tx2 (
     output      DONE // done sending, ready for new data
 );
 
+    // BAUD:             9600     | 115200  | 921600
+    // -------------------------------------------------
+    // Clks/Bit @ 12MHz: 1250.000 | 104.167 | 13.021
+    // Clks/Bit @ 30MHz: 3125.000 | 260.417 | 32.552
+    // Clks/Bit @ 50MHz: 5208.333 | 434.028 | 54.253
+    // Clks/Bit @ 75MHz: 7812.500 | 651.042 | 81.380
+
+    parameter F_CLK = 12_000_000;
     parameter UART_BAUD = 9600;
-    // parameter UART_BAUD = 115200;
-    // parameter UART_BAUD = 921600;
-    parameter CLKS_PER_BIT = (12_000_000 / UART_BAUD);
+    parameter CLKS_PER_BIT = (F_CLK / UART_BAUD);
 
     parameter IDLE    = 3'b000;
     parameter START   = 3'b001;
