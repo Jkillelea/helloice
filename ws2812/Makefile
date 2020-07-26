@@ -1,4 +1,4 @@
-SOURCES = top.v ram.v bitcontroller.v
+SOURCES = ram.v bitcontroller.v
 PCF = icestick.pcf
 DEV = 1k # HX-1k
 
