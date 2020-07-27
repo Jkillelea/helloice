@@ -30,7 +30,7 @@ module BitController (
     parameter T0L    = 800 * F_CLK / 10**9; // 9.6 -> 9 clks
     parameter T1H    = 700 * F_CLK / 10**9; // 8.4 -> 8 clks
     parameter T1L    = 600 * F_CLK / 10**9; // 7.2 -> 7 clks
-    parameter TRESET = 60  * F_CLK / 10**6; // 60 microseconds
+    parameter TRESET =  60 * F_CLK / 10**6; // 60 microseconds
 
     parameter STATE_IDLE  = 2'b00;
     parameter STATE_DATA  = 2'b01;
@@ -45,7 +45,7 @@ module BitController (
         $display("T1L   %d", T1L);
     end
 
-    reg [ 1:0] State       = STATE_IDLE;
+    reg [ 1:0] State       = STATE_DATA;
     reg [31:0] Clk_Counter = 0;
     reg [ 7:0] Bit_Counter = 0;
 
@@ -92,6 +92,12 @@ module BitController (
                 end
 
                 STATE_DONE: begin
+                    State <= STATE_IDLE;
+                    Done  <= 1;
+                    Clk_Counter <= 0;
+                    Bit_Counter <= 0;
+                end
+                default: begin
                     State <= STATE_IDLE;
                     Done  <= 1;
                     Clk_Counter <= 0;

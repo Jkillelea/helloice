@@ -1,6 +1,7 @@
-SOURCES = ram.v bitcontroller.v
+SOURCES = top.v pll.v bitcontroller.v
 PCF = icestick.pcf
 DEV = 1k # HX-1k
+ICETIME_DEV = hx1k # HX-1k also, just takes a different string...
 
 MAIN = top
 
@@ -9,8 +10,12 @@ MAIN = top
 upload: $(MAIN).bin
 	iceprog $^
 
-%.bin: %.txt
+%.bin: %.asc
+	$(MAKE) time
 	icepack $^ $@
+
+%.asc: %.blif
+	arachne-pnr -d $(DEV) -p $(PCF) $^ -o $@
 
 %.txt: %.blif
 	arachne-pnr -d $(DEV) -p $(PCF) $^ -o $@
@@ -32,8 +37,13 @@ test.vcd: design
 design: tb.v $(SOURCES)
 	iverilog -o $@ $^
 
+.PHONY: time
+time: $(MAIN).asc
+	icetime -d $(ICETIME_DEV) $^
+
 .PHONY: clean
 clean:
+	rm -f top.asc
 	rm -f top.txt
 	rm -f *.blif
 	rm -f *.bin
