@@ -1,28 +1,27 @@
+`default_nettype none
+`timescale 1ns/1ps
 module Top (
-    input ICE_CLK,
+    input CLK_IN,
     output WS2812_DAT
 );
-
-    wire pll_50m_clk;
-    wire pll_locked;
-
-    pll pll_50m (ICE_CLK, pll_50m_clk, pll_locked);
+    
+    parameter F_CLK = 12_000_000;
 
     reg [23:0] indata = 0;
     reg        reset  = 0;
     wire       done;
 
     BitController #(
-        .F_CLK(50_000_000)
+        .F_CLK(F_CLK)
     ) ws2812_bitcontroller (
-        pll_50m_clk,
+        CLK_IN,
         indata,
         reset,
         WS2812_DAT,
         done
     );
 
-    always @(posedge pll_50m_clk) begin
+    always @(posedge CLK_IN) begin
         reset <= 0;
         indata <= indata;
         if (done) begin

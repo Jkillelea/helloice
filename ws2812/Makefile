@@ -1,4 +1,4 @@
-SOURCES = top.v pll.v bitcontroller.v
+SOURCES = top.v bsp.v bitcontroller.v
 PCF = icestick.pcf
 DEV = 1k # HX-1k
 ICETIME_DEV = hx1k # HX-1k also, just takes a different string...
@@ -21,6 +21,7 @@ upload: $(MAIN).bin
 	arachne-pnr -d $(DEV) -p $(PCF) $^ -o $@
 
 %.blif: $(SOURCES)
+	SOURCES += pll.v
 	yosys -p "synth_ice40 -blif $@" $^
 
 # Simulation

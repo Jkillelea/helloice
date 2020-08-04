@@ -2,24 +2,13 @@
 `timescale 1ns / 1ps
 
 module tb();
-    // 12 MHz
     reg clk = 0;
-    // always #42 clk <= !clk;
+    // always #42 clk <= !clk; // 12 MHz
     always #10 clk <= !clk; // 50MHz
-
-    reg  [23:0] indata = 0;
-    reg         reset = 0;
-    wire        led_out;
-    wire        done;
-
-    BitController #(.F_CLK(50_000_000))
-    bitcontroller (
-        clk, indata, reset, led_out, done
-    );
 
     initial begin
         $dumpfile("test.vcd");
-        $dumpvars(0, bitcontroller);
+        $dumpvars(0, top);
 
         // reset <= 1;
         // #100
@@ -29,13 +18,7 @@ module tb();
         $finish;
     end
 
-    always @(posedge clk) begin
-        reset <= 0;
-        indata <= indata;
-        if (done) begin
-            reset <= 1;
-            indata <= indata + 1;
-        end
-    end
+    wire ws2812_dat;
+    Top #(.F_CLK(50_000_000)) top(clk, ws2812_dat);
 
 endmodule
