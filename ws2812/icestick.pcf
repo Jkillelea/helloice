@@ -1,12 +1,12 @@
 set_io ICE_CLK 21
- 
-# set_io GLED5 95
-# set_io RLED4 96
-# set_io RLED3 97
-# set_io RLED2 98
-# set_io RLED1 99
 
-# set_io J3_10 44
+set_io GLED5 95
+set_io RLED4 96
+set_io RLED3 97
+set_io RLED2 98
+set_io RLED1 99
+
+set_io J3_10 44
 # set_io J3_9 45
 # set_io J3_8 47
 # set_io J3_7 48
@@ -36,4 +36,4 @@ set_io ICE_CLK 21
 # set_io UART_TX 8
 # set_io UART_RX 9
 
-set_io OUT106 87
+# set_io OUT106 87

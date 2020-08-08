@@ -14,11 +14,13 @@ module tb();
         // #100
         // reset <= 0;
 
-        #10_000_000; // 1 ms
+        #1_000_000; // 1 ms
         $finish;
     end
 
     wire ws2812_dat;
-    Top #(.F_CLK(50_000_000)) top(clk, ws2812_dat);
+    wire ws2812_done;
+    wire ws2812_reset;
+    Top #(.F_CLK(50_000_000)) top(clk, ws2812_dat, ws2812_done, ws2812_reset);
 
 endmodule

@@ -15,11 +15,11 @@
 // WS2812 timing controller. Feed it a bit array and hit reset.
 // It will pulse DONE when it needs a new bit
 module BitController (
-    input                     Clk,
-    input      [BITWIDTH-1:0] Indata,
-    input                     Reset,
-    output reg                Ws2812Out,
-    output reg                Done
+    input                 Clk,
+    input  [BITWIDTH-1:0] Indata,
+    input                 Reset,
+    output                WS2812OUT,
+    output                DONE
 );
 
     parameter F_CLK = 12_000_000;
@@ -46,8 +46,13 @@ module BitController (
     end
 
     reg [ 1:0] State       = STATE_DATA;
+    reg        Done        = 1;
+    reg        Ws2812Out   = 0;
     reg [31:0] Clk_Counter = 0;
     reg [ 7:0] Bit_Counter = 0;
+
+    assign DONE      = Done;
+    assign WS2812OUT = Ws2812Out;
 
     always @(posedge Clk) begin
         if (Reset) begin

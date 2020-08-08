@@ -2,13 +2,14 @@
 `timescale 1ns/1ps
 module Top (
     input CLK_IN,
-    output WS2812_DAT
+    output Ws2812_Dat,
+    output Ws2812_Done,
+    output reg Ws2812_Reset
 );
-    
+
     parameter F_CLK = 12_000_000;
 
     reg [23:0] indata = 0;
-    reg        reset  = 0;
     wire       done;
 
     BitController #(
@@ -16,17 +17,21 @@ module Top (
     ) ws2812_bitcontroller (
         CLK_IN,
         indata,
-        reset,
-        WS2812_DAT,
-        done
+        Ws2812_Reset,
+        Ws2812_Dat,
+        Ws2812_Done
     );
 
+    // assign Ws2812_Done = done;
+
     always @(posedge CLK_IN) begin
-        reset <= 0;
-        indata <= indata;
-        if (done) begin
-            reset <= 1;
+        if (Ws2812_Done) begin
+            Ws2812_Reset  <= 1;
             indata <= indata + 1;
+        end
+        else begin
+            Ws2812_Reset  <= 0;
+            indata <= indata;
         end
     end
 
