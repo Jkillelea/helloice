@@ -11,10 +11,11 @@ module uart_rx
     output [7:0] RX_BYTE
 );
 
+    parameter F_CLK = 12_000_000;
     parameter UART_BAUD    = 9600;
     // parameter UART_BAUD    = 115200;
     // parameter UART_BAUD    = 921600;
-    parameter CLKS_PER_BIT = (12_000_000 / UART_BAUD);
+    parameter CLKS_PER_BIT = (F_CLK / UART_BAUD);
 
     parameter IDLE    = 3'b000;
     parameter START   = 3'b001;

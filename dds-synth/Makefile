@@ -1,4 +1,4 @@
-SOURCES = top.v uart_rx.v pll.v
+SOURCES = top.v uart_rx.v pll.v ram.v
 PCF = icestick.pcf
 DEV = 1k # HX-1k
 ICETIME_DEV = hx1k # HX-1k also, just takes a different string...

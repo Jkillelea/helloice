@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,10 +30,8 @@ int set_interface_attribs(int fd, int speed, int parity)
     tty.c_oflag = 0;                // no remapping, no delays
     tty.c_cc[VMIN]  = 0;            // read doesn't block
     tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
-
     tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
-
-    tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
+    tty.c_cflag |= (CLOCAL | CREAD);        // ignore modem controls,
     // enable reading
     tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
     tty.c_cflag |= parity;
@@ -47,7 +46,7 @@ int set_interface_attribs(int fd, int speed, int parity)
     return 0;
 }
 
-void set_blocking(int fd, int should_block)
+void set_blocking(int fd, bool should_block)
 {
     struct termios tty;
     memset(&tty, 0, sizeof tty);
@@ -77,16 +76,13 @@ int main(int argc, char *argv[])
     }
 
     set_interface_attribs(fd, B921600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-    set_blocking(fd, 0);                // set no blocking
+    set_blocking(fd, false);                // set no blocking
 
-    while (1)
+    for (uint16_t i = 0; i < 256; i++)
     {
-        for (uint8_t i = 0; i < 0b01111111; i++)
-        {
-            // uint8_t f = (uint8_t) 127*sin(2 * M_PI * ((double) i) / 255) + 127;
-            uint8_t f = i << 1;
-            write(fd, &f, 1);
-        }
+        // uint8_t f = (uint8_t) 127*sin(2 * M_PI * ((double) i) / 256) + 127;
+        uint8_t f = (uint8_t) i*i;
+        write(fd, &f, 1);
     }
 
     return 0;
