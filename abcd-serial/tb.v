@@ -23,21 +23,21 @@ module tb();
         clk, uart_rx, uart_tx, rled1, rled2, rled3, rled4, gled5
     );
 
-    // task uart_signal (input [7:0] byte);
-    //     integer i;
-    //     begin
-    //         // Start bit
-    //         uart_rx = 0;
-    //         #BITPER;
-    //         for (i = 0; i < 8; i = i + 1) begin
-    //             uart_rx = byte[i];
-    //             #BITPER;
-    //         end
-    //         // Stop bit
-    //         uart_rx = 1;
-    //         #BITPER;
-    //     end
-    // endtask
+    task uart_signal (input [7:0] byte);
+        integer i;
+        begin
+            // Start bit
+            uart_rx = 0;
+            #BITPER;
+            for (i = 0; i < 8; i = i + 1) begin
+                uart_rx = byte[i];
+                #BITPER;
+            end
+            // Stop bit
+            uart_rx = 1;
+            #BITPER;
+        end
+    endtask
 
     initial begin
         $dumpfile("test.vcd");
@@ -48,13 +48,13 @@ module tb();
         #10_000; // 0.01 ms
         uart_rx = 1;
 
-        // uart_signal(8'h01);
-        // uart_signal(8'h02);
-        // uart_signal(8'h03);
-        // uart_signal(8'h04);
-        // uart_signal(8'h05);
-        // uart_signal(8'h06);
-        // uart_signal("h");
+        uart_signal(8'h01);
+        uart_signal(8'h02);
+        uart_signal(8'h03);
+        uart_signal(8'h04);
+        uart_signal(8'h05);
+        uart_signal(8'h06);
+        uart_signal("h");
 
         #50_000_000; // 50 ms
         $finish;
