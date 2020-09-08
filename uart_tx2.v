@@ -1,6 +1,8 @@
 `default_nettype none
 
-module uart_tx2 (
+module uart_tx2 #(
+    parameter UART_BAUD = 9600;
+) (
     input       CLK,
     input       TX_DV,
     input [7:0] TX_BYTE,
@@ -8,7 +10,7 @@ module uart_tx2 (
     output      DONE // done sending, ready for new data
 );
 
-    parameter UART_BAUD = 9600;
+    // parameter UART_BAUD = 9600;
     // parameter UART_BAUD = 115200;
     // parameter UART_BAUD = 921600;
     parameter CLKS_PER_BIT = (12_000_000 / UART_BAUD);
