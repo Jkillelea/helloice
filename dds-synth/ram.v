@@ -1,25 +1,25 @@
+// 512x8 RAM, taken from Lattice ice40 memory programming guide
 `default_nettype none
-module ram (DIN, WR_ADDR, WR_EN, CLK, RD_ADDR, DOUT);
-    // 512x8 RAM, taken directly from Lattice ice40 memory programming guide
-    parameter addr_width = 8;
-    parameter data_width = 6;
-
-    input [addr_width-1:0]  WR_ADDR;
-    input [data_width-1:0]  DIN;
-    input                   WR_EN;
-    input                   CLK;
-    input  [addr_width-1:0] RD_ADDR;
-    output [data_width-1:0] DOUT;
+module ram #(
+    parameter ADDR_WIDTH = 9,
+    parameter DATA_WIDTH = 8
+) (
+    input                       clk,
+    input      [ADDR_WIDTH-1:0] wr_addr,
+    input      [DATA_WIDTH-1:0] din,
+    input                       wr_en,
+    input      [ADDR_WIDTH-1:0] rd_addr,
+    output reg [DATA_WIDTH-1:0] dout
+);
 
     // The actual RAM hardware block is inferred here by the very large register
     // rather than being explicityly stated
-    reg [data_width-1:0] DOUT; // Register for output.
-    reg [data_width-1:0] mem[(1<<addr_width)-1:0];
+    reg [DATA_WIDTH-1:0] bram_memory[(1<<ADDR_WIDTH)-1:0];
 
-    always @(posedge CLK) begin
-        if (WR_EN)
-            mem[WR_ADDR] <= DIN;
-        DOUT <= mem[RD_ADDR]; // Output register controlled by clock.
+    always @(posedge clk) begin
+        if (wr_en)
+            bram_memory[wr_addr] <= din;
+        dout <= bram_memory[rd_addr]; // Output register controlled by clock.
     end
 
 endmodule

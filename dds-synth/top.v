@@ -19,14 +19,14 @@ module Top (
 
     wire pll_clk;
     wire pll_locked;
-    pll pll75mhz(.clock_in(ICE_CLK), .clock_out(pll_clk), .locked(pll_locked));
+    pll pllclock(.clock_in(ICE_CLK), .clock_out(pll_clk), .locked(pll_locked));
 
     // UART RX wires
     wire       rx_dv;   // data valid (conversion done)
     wire [7:0] rx_byte; // rx data
 
-    uart_rx #(.UART_BAUD(921600), .F_CLK(75_000_000)) rx (
-        pll_clk,
+    uart_rx #(.UART_BAUD(115200), .F_CLK(12_000_000)) rx (
+        ICE_CLK,
         UART_RX,
         rx_dv,
         rx_byte
@@ -37,12 +37,14 @@ module Top (
     reg  [DATA_SZ-1:0] ram_din     = 0;
     reg  [ADDR_SZ-1:0] ram_wr_addr = 0;
     reg                ram_wr_en   = 1;
-    wire               ram_clk;
     reg  [ADDR_SZ-1:0] ram_rd_addr = 0;
     wire [DATA_SZ-1:0] ram_dout;
 
-    assign ram_clk = pll_clk;
-    ram signal_data(ram_din, ram_wr_addr, ram_wr_en, ram_clk, ram_rd_addr, ram_dout);
+    ram #(
+        .ADDR_WIDTH(ADDR_SZ), .DATA_WIDTH(DATA_SZ)
+    ) signal_data(
+        pll_clk, ram_wr_addr, ram_din, ram_wr_en, ram_rd_addr, ram_dout
+    );
 
     wire [5:0] dds_bits = {DDSBIT5, DDSBIT4, DDSBIT3, DDSBIT2, DDSBIT1, DDSBIT0};
     wire [4:0] leds     = {GLED5, RLED4, RLED3, RLED2, RLED1};
@@ -53,18 +55,10 @@ module Top (
         ram_wr_addr <= ram_wr_addr + 1;
     end
 
-    // clock divider
-    parameter BASE = 0;
-    reg [31:0] clk_counter = 0;
-
-    always @(posedge pll_clk) begin
-        clk_counter <= clk_counter + 1;
-    end
-
     // Data output from RAM
     assign dds_bits = ram_dout;
     assign leds = ram_wr_addr[4:0];
-    always @(posedge clk_counter[BASE]) begin
+    always @(posedge pll_clk) begin
         ram_rd_addr <= ram_rd_addr + 1;
     end
 
