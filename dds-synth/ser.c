@@ -75,14 +75,20 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    set_interface_attribs(fd, B921600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
+    set_interface_attribs(fd, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking(fd, false);                // set no blocking
 
-    for (uint16_t i = 0; i < 256; i++)
+    for (int frequency = 1; frequency <= 10; frequency++)
     {
-        // uint8_t f = (uint8_t) 127*sin(2 * M_PI * ((double) i) / 256) + 127;
-        uint8_t f = (uint8_t) i*i;
-        write(fd, &f, 1);
+        uint8_t waveform[256] = {0};
+        for (uint16_t i = 0; i < 256; i += 1)
+        {
+            uint8_t f = (uint8_t) 127 * sin(2 * M_PI * ((double) frequency*i) / 256) + 127;
+            waveform[i] = f;
+            // uint8_t f = (uint8_t) frequency*i;
+        }
+        write(fd, waveform, 256);
+        sleep(1);
     }
 
     return 0;
