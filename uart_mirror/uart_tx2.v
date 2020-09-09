@@ -18,6 +18,7 @@ module uart_tx2 (
     parameter F_CLK = 12_000_000;
     parameter UART_BAUD = 9600;
     parameter CLKS_PER_BIT = (F_CLK / UART_BAUD);
+    parameter STOP_BITS = 2;
 
     parameter IDLE    = 3'b000;
     parameter START   = 3'b001;
@@ -91,7 +92,7 @@ module uart_tx2 (
             STOP: begin
                 Tx_Data <= 1;
 
-                if (Clock_Count < CLKS_PER_BIT - 1) begin
+                if (Clock_Count < STOP_BITS*CLKS_PER_BIT - 1) begin
                     Clock_Count <= Clock_Count + 1;
                 end
                 else begin
