@@ -12,6 +12,7 @@
 int set_interface_attribs(int fd, int speed, int parity)
 {
     struct termios tty;
+
     if (tcgetattr(fd, &tty) != 0)
     {
         perror("error from tcgetattr");
@@ -43,13 +44,14 @@ int set_interface_attribs(int fd, int speed, int parity)
         perror("error from tcsetattr");
         return -1;
     }
+
     return 0;
 }
 
 void set_blocking(int fd, bool should_block)
 {
     struct termios tty;
-    memset(&tty, 0, sizeof tty);
+    memset(&tty, 0, sizeof(tty));
     if (tcgetattr(fd, &tty) != 0)
     {
         perror("error from tggetattr");
@@ -60,33 +62,39 @@ void set_blocking(int fd, bool should_block)
     tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0)
+    {
         perror("error setting term attributes");
+    }
 }
 
 
 int main(int argc, char *argv[])
 {
-    char *portname = "/dev/ttyUSB1";
+    char portname[256] = "/dev/ttyUSB1";
+    if (argc > 1)
+        strncpy(portname, argv[1], 256);
+
     int fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC);
 
     if (fd < 0)
     {
-        perror("error opening");
+        perror("open");
         return 0;
     }
 
     set_interface_attribs(fd, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking(fd, false);                // set no blocking
 
-    for (int frequency = 1; frequency <= 10; frequency++)
+    for (int frequency = 1; frequency <= 1; frequency++)
     {
         uint8_t waveform[256] = {0};
         for (uint16_t i = 0; i < 256; i += 1)
         {
             uint8_t f = (uint8_t) 127 * sin(2 * M_PI * ((double) frequency*i) / 256) + 127;
-            waveform[i] = f;
             // uint8_t f = (uint8_t) frequency*i;
+            waveform[i] = f;
         }
+
         write(fd, waveform, 256);
         sleep(1);
     }

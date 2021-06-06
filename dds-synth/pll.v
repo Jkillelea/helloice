@@ -19,6 +19,19 @@ module pll (
 );
 
     wire clk_to_buf;
+    // F_PLLIN:    12.000 MHz (given)
+    // F_PLLOUT:   60.000 MHz (requested)
+    // F_PLLOUT:   60.000 MHz (achieved)
+    // 
+    // FEEDBACK: SIMPLE
+    // F_PFD:   12.000 MHz
+    // F_VCO:  960.000 MHz
+    // 
+    // DIVR:  0 (4'b0000)
+    // DIVF: 79 (7'b1001111)
+    // DIVQ:  4 (3'b100)
+    // 
+    // FILTER_RANGE: 1 (3'b001)
 
     // F_PLLIN:    12.000 MHz (given)
     // F_PLLOUT:  200.000 MHz (requested)
@@ -50,12 +63,16 @@ module pll (
     // FILTER_RANGE: 1 (3'b001)
 
 
-
+    // DIVR:  0 (4'b0000)
+    // DIVF: 79 (7'b1001111)
+    // DIVQ:  4 (3'b100)
+    // 
+    // FILTER_RANGE: 1 (3'b001)
     SB_PLL40_CORE #(
        .FEEDBACK_PATH("SIMPLE"),
        .DIVR(4'b0000),
-       .DIVF(7'b0101101),
-       .DIVQ(3'b001),
+       .DIVF(7'b1001111),
+       .DIVQ(3'b100),
        .FILTER_RANGE(3'b001)
     ) uut (
        .LOCK(locked),
