@@ -69,7 +69,11 @@ module Upduino (
     UART_TO_433MHZ uart_rf_inst(.uart_rx(serial_rxd), .rf_tx(rf_out));
 
     // Visual confirmation of RF output
-    SB_RGBA_DRV RGB_DRIVER (
+    SB_RGBA_DRV #(
+        .RGB0_CURRENT("0b000111"),
+        .RGB1_CURRENT("0b000111"),
+        .RGB2_CURRENT("0b000111"),
+    ) RGB_DRIVER (
       .RGBLEDEN(1'b1),
       .RGB0PWM (0),
       .RGB1PWM (0),
@@ -79,10 +83,5 @@ module Upduino (
       .RGB1    (led_blue),
       .RGB2    (led_red)
     );
-
-    defparam RGB_DRIVER.RGB0_CURRENT = "0b000001";
-    defparam RGB_DRIVER.RGB1_CURRENT = "0b000001";
-    defparam RGB_DRIVER.RGB2_CURRENT = "0b000001";
-
 
 endmodule

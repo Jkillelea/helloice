@@ -23,6 +23,11 @@ test.vcd: design
 design: $(SIM_SOURCE) $(CORE_SOURCE)
 	iverilog -o $@ $^
 
+.PHONY: time
+time: uart_to_433mhz.asc
+	icetime -d up5k -c 12 -mtr $@.rpt $^
+
+
 .PHONY: flash
 flash: uart_to_433mhz.bin
 	iceprog -d i:0x0403:0x6014 uart_to_433mhz.bin
@@ -32,4 +37,5 @@ clean:
 	$(RM) -f uart_to_433mhz.blif uart_to_433mhz.asc uart_to_433mhz.bin
 	$(RM) -f design
 	$(RM) -f test.vcd
+	$(RM) -f time.rpt
 
