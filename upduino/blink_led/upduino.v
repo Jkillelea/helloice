@@ -15,7 +15,7 @@ module Upduino (
     // FTDI chip interface
     output serial_txd, // FPGA transmit to USB
     input  serial_rxd, // FPGA receive from USB
-    output spi_cs, // Connected to SPI flash, drive high unless using SPI flash!
+    output spi_cs,     // Connected to SPI flash, drive high unless using SPI flash!
 
     // Normal GPIO pins, left side
     inout gpio_23,
@@ -62,27 +62,31 @@ module Upduino (
 );
 
     assign spi_cs = 1'b1;
+    assign serial_txd = 1'b1; // idle
 
-    // 12MHz
+    parameter F_CLK = 48_000_000; // Hz
     wire clk;
-    SB_HFOSC int_osc_12m (.CLKHFPU(1'b1), .CLKHFEN(1'b1), .CLKHF(clk));
+    SB_HFOSC int_osc_48m (.CLKHFPU(1'b1), .CLKHFEN(1'b1), .CLKHF(clk));
 
     wire pwm_red;
     wire pwm_blue;
     wire pwm_green;
 
-    rgb_blink #(.PRESCALER(18)) blinker (clk, pwm_red, pwm_blue, pwm_green);
+    rgb_blink #(.PRESCALER(20)) blinker (clk, pwm_red, pwm_blue, pwm_green);
 
-    //----------------------------------------------------------------------------
-    //                       Instantiate RGB primitive                          --
-    //----------------------------------------------------------------------------
+    // Instantiate RGB primitive
     SB_RGBA_DRV RGB_DRIVER (
       .RGBLEDEN(1'b1),
+
+      // Outputs are open drain (inverting)
       .RGB0PWM (!pwm_green),
       .RGB1PWM (!pwm_blue),
       .RGB2PWM (!pwm_red),
+
       .CURREN  (1'b1),
-      .RGB0    (led_green), //Actual Hardware connection
+
+      //Actual Hardware connection
+      .RGB0    (led_green),
       .RGB1    (led_blue),
       .RGB2    (led_red)
     );

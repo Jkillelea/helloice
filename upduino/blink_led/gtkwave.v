@@ -1,3 +1,4 @@
+`default_nettype none
 `timescale 1ns / 10ps
 
 //----------------------------------------------------------------------------
@@ -79,7 +80,7 @@ module GtkWave ();
         $dumpvars(0, GtkWave);
         $display("starting...");
 
-        #100000
+        #1000000
         $display("done.");
         $finish;
     end
