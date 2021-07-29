@@ -1,40 +1,43 @@
 `default_nettype none
 `timescale 1ns / 10ps
 
-module SAWTOOTH #(parameter WIDTH = 8)
+module SAWTOOTH #(
+    parameter WIDTH = 8,
+    parameter PRESCALER = 0
+)
 (
-    input  clk,
-    output [WIDTH:0] sawtooth
+    input                  clk,
+    output reg [WIDTH-1:0] sawtooth,
+    output reg             direction
 );
-    localparam DIR_UP = 1'b0;
-    localparam DIR_DN = 1'b1;
+    localparam DIR_DN    = 1'b0;
+    localparam DIR_UP    = 1'b1;
+    localparam COUNT_MAX = (2 << (WIDTH - 1)) - 1;
 
-    reg [WIDTH:0] sawtooth = 0;
+    reg [WIDTH-1:0] counter   = 0;
+    reg [WIDTH-1:0] clks      = 0;
 
-    reg direction = DIR_UP;
+    initial begin
+        sawtooth  <= 0;
+        direction <= DIR_UP;
+    end
 
     always @(posedge clk) begin
-        case (direction)
-            DIR_UP: begin
-                sawtooth <= sawtooth + 1;
+        clks <= clks + 1;
+    end
 
-                if (sawtooth == ((2 << WIDTH) - 2)) begin
-                    direction <= DIR_DN;
-                end
-            end
+    always @(posedge clks[PRESCALER]) begin
+        counter <= counter + 1;
 
-            DIR_DN: begin
-                sawtooth <= sawtooth - 1;
+        if (counter == COUNT_MAX) begin
+            direction <= !direction;
+        end
 
-                if (sawtooth == 2) begin
-                    direction <= DIR_UP;
-                end
-            end
+        if (direction == DIR_UP) // up
+            sawtooth <= counter;
+        else                     // down
+            sawtooth <= COUNT_MAX - counter;
 
-            default: begin
-                direction <= DIR_UP;
-            end
-        endcase
     end
 endmodule
 

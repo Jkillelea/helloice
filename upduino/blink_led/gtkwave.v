@@ -73,7 +73,7 @@ module GtkWave ();
     wire pwm_red;
     wire pwm_blue;
     wire pwm_green;
-    rgb_blink #(.PRESCALER(8)) blinker (clk, pwm_red, pwm_blue, pwm_green);
+    rgb_blink #(.PRESCALER(4)) blinker (clk, pwm_red, pwm_blue, pwm_green);
 
     initial begin
         $dumpfile("test.vcd");

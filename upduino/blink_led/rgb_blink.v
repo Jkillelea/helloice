@@ -9,55 +9,34 @@ module rgb_blink #(parameter PRESCALER = 0)
     output pwm_green  // Green
 );
 
-    localparam COUNTER_BITS = 7 + PRESCALER;
-    localparam DIR_UP = 1'b0;
-    localparam DIR_DN = 1'b1;
+    localparam COUNTER_BITS = 8 + PRESCALER;
 
-    reg [COUNTER_BITS:0] pwm_level = 0;
-
-    reg direction = DIR_UP;
-
-    reg [1:0] color_select = 0;
-
-    // Counter
-    always @(posedge clk) begin
-        case (direction)
-            DIR_UP: begin
-                if (pwm_level == ((2 << COUNTER_BITS) - 2)) begin // overflow, go down
-                    direction <= DIR_DN;
-                end else begin
-                    pwm_level <= pwm_level + 1;
-                end
-            end
-
-            DIR_DN: begin
-                if (pwm_level == 1) begin // underflow, go up and switch to the next color
-                    direction <= DIR_UP;
-
-                    if (color_select == 2) begin
-                        color_select <= 0;
-                    end else begin
-                        color_select <= color_select + 1;
-                    end
-
-                end else begin
-                    pwm_level <= pwm_level - 1;
-                end
-            end
-
-            default: begin
-                pwm_level <= pwm_level + 1;
-            end
-        endcase
-    end
+    wire [COUNTER_BITS-1:0] pwm_level;
+    wire direction;
+    SAWTOOTH #(.PRESCALER(1), .WIDTH(COUNTER_BITS)) sawtooth(clk, pwm_level, direction);
 
     wire pwm_signal;
-    PWM #(.BITS(8)) led_pwm(clk, pwm_level[(7 + PRESCALER):(0 + PRESCALER)], pwm_signal);
+    PWM #(
+        .BITS(8)
+    ) led_pwm (
+        clk,
+        pwm_level[(COUNTER_BITS - 1):(PRESCALER)],
+        pwm_signal
+    );
+
+    reg [1:0] color_select = 2'b0;
+    always @(posedge direction) begin
+        if (color_select == 2)
+            color_select <= 0;
+        else
+            color_select <= color_select + 1;
+    end
 
     wire [3:0] outputs;
     assign pwm_red   = outputs[0];
     assign pwm_green = outputs[1];
     assign pwm_blue  = outputs[2];
+
     Mux4Out1In mux(outputs, color_select, pwm_signal);
 
 endmodule
@@ -76,13 +55,19 @@ endmodule
 module Mux4Out1In
 (
     output reg [3:0] outputs,
-    input  [1:0] output_select,
-    input        in
+    input      [1:0] output_select,
+    input            in
 );
+    // initial begin
+    //     outputs <= {1'b1, 1'b1, 1'b1, 1'b1};
+    // end
+
     always @(*) begin
-        outputs <= {1'b1, 1'b1, 1'b1, 1'b1};
-        outputs[output_select] <= in;
+        outputs                = {1'b1, 1'b1, 1'b1, 1'b1};
+        outputs[output_select] = in;
+        
     end
+
 endmodule
 
 // Simple PWM module
@@ -106,8 +91,11 @@ module PWM #(parameter BITS = 8)
 );
     reg [BITS-1:0] counter = 0;
 
-    always @(posedge clk)
+    always @(posedge clk) begin
         counter <= counter + 1;
+    end
 
     assign pwm = (counter > level);
+    // assign pwm = 0;
+
 endmodule
