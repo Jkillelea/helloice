@@ -1,8 +1,9 @@
 `default_nettype none
 `timescale 1ns / 10ps
 
-module rgb_blink #(parameter PRESCALER = 0)
-(
+module rgb_blink #(
+    parameter PRESCALER = 0
+) (
     input  clk,
     output pwm_red,   // Red
     output pwm_blue,  // Blue
@@ -13,14 +14,22 @@ module rgb_blink #(parameter PRESCALER = 0)
 
     wire [COUNTER_BITS-1:0] pwm_level;
     wire direction;
-    SAWTOOTH #(.PRESCALER(1), .WIDTH(COUNTER_BITS)) sawtooth(clk, pwm_level, direction);
+
+    SAWTOOTH #(
+        .PRESCALER(1),
+        .WIDTH(COUNTER_BITS)
+    ) sawtooth (
+        clk,
+        pwm_level,
+        direction
+    );
 
     wire pwm_signal;
     PWM #(
         .BITS(8)
     ) led_pwm (
         clk,
-        pwm_level[(COUNTER_BITS - 1):(PRESCALER)],
+        pwm_level[(COUNTER_BITS - 1):(COUNTER_BITS - 8)],
         pwm_signal
     );
 
@@ -33,11 +42,14 @@ module rgb_blink #(parameter PRESCALER = 0)
     end
 
     wire [3:0] outputs;
+    Mux4Out1In mux (
+        outputs,
+        color_select,
+        pwm_signal
+    );
     assign pwm_red   = outputs[0];
     assign pwm_green = outputs[1];
     assign pwm_blue  = outputs[2];
-
-    Mux4Out1In mux(outputs, color_select, pwm_signal);
 
 endmodule
 
@@ -48,7 +60,7 @@ module Mux4In1Out
     input [3:0] inputs
 );
     always @(*) begin
-        out <= inputs[input_select];
+        out = inputs[input_select];
     end
 endmodule
 
@@ -58,9 +70,6 @@ module Mux4Out1In
     input      [1:0] output_select,
     input            in
 );
-    // initial begin
-    //     outputs <= {1'b1, 1'b1, 1'b1, 1'b1};
-    // end
 
     always @(*) begin
         outputs                = {1'b1, 1'b1, 1'b1, 1'b1};
