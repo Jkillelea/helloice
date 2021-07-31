@@ -72,16 +72,27 @@ module Upduino (
     wire pwm_blue;
     wire pwm_green;
 
-    rgb_blink #(.PRESCALER(20)) blinker (clk, pwm_red, pwm_blue, pwm_green);
+    rgb_blink #(
+        .PRESCALER(16)
+    ) blinker (
+        clk,
+        pwm_red,
+        pwm_blue,
+        pwm_green
+    );
+
+    assign gpio_2  = pwm_red;
+    assign gpio_46 = pwm_green;
+    assign gpio_47 = pwm_blue;
 
     // Instantiate RGB primitive
     SB_RGBA_DRV RGB_DRIVER (
       .RGBLEDEN(1'b1),
 
-      // Outputs are open drain (inverting)
-      .RGB0PWM (!pwm_green),
-      .RGB1PWM (!pwm_blue),
-      .RGB2PWM (!pwm_red),
+      // Outputs are open drain
+      .RGB0PWM (pwm_green),
+      .RGB1PWM (pwm_blue),
+      .RGB2PWM (pwm_red),
 
       .CURREN  (1'b1),
 

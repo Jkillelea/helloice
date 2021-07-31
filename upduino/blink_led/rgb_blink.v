@@ -33,21 +33,20 @@ module rgb_blink #(
         pwm_signal
     );
 
+    // Cycle through colors
     reg [1:0] color_select = 2'b0;
     always @(posedge direction) begin
-        if (color_select == 2)
-            color_select <= 0;
-        else
-            color_select <= color_select + 1;
+        color_select <= color_select + 1;
     end
 
+    // Mux the pwm signal to LED outputs
     wire [3:0] outputs;
     Mux4Out1In mux (
         outputs,
         color_select,
         pwm_signal
     );
-    assign pwm_red   = outputs[0];
+    assign pwm_red   = outputs[0] | outputs[3];
     assign pwm_green = outputs[1];
     assign pwm_blue  = outputs[2];
 
@@ -72,7 +71,7 @@ module Mux4Out1In
 );
 
     always @(*) begin
-        outputs                = {1'b1, 1'b1, 1'b1, 1'b1};
+        outputs                = {1'b0, 1'b0, 1'b0, 1'b0};
         outputs[output_select] = in;
         
     end
@@ -104,7 +103,7 @@ module PWM #(parameter BITS = 8)
         counter <= counter + 1;
     end
 
-    assign pwm = (counter > level);
+    assign pwm = (counter < level);
     // assign pwm = 0;
 
 endmodule
