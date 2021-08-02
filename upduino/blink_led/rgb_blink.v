@@ -2,7 +2,8 @@
 `timescale 1ns / 10ps
 
 module rgb_blink #(
-    parameter PRESCALER = 0
+    parameter COUNTER_BITS = 8,
+    parameter PRESCALER    = 0
 ) (
     input  clk,
     output pwm_red,   // Red
@@ -10,13 +11,12 @@ module rgb_blink #(
     output pwm_green  // Green
 );
 
-    localparam COUNTER_BITS = 8 + PRESCALER;
 
     wire [COUNTER_BITS-1:0] pwm_level;
     wire direction;
 
     SAWTOOTH #(
-        .PRESCALER(1),
+        .PRESCALER(PRESCALER),
         .WIDTH(COUNTER_BITS)
     ) sawtooth (
         clk,
@@ -26,10 +26,10 @@ module rgb_blink #(
 
     wire pwm_signal;
     PWM #(
-        .BITS(8)
-    ) led_pwm (
+        .BITS(COUNTER_BITS)
+    ) LED_PWM (
         clk,
-        pwm_level[(COUNTER_BITS - 1):(COUNTER_BITS - 8)],
+        pwm_level,
         pwm_signal
     );
 
@@ -75,35 +75,5 @@ module Mux4Out1In
         outputs[output_select] = in;
         
     end
-
-endmodule
-
-// Simple PWM module
-//     /|    /|    /| Counter
-//    / |   / |   / |
-//-------------------- level
-//  /   | /   | /   |
-// /    |/    |/    |
-//
-//   |--|  |--|  |--| pwm
-//   |  |  |  |  |  |
-//   |  |  |  |  |  |
-//---|  |--|  |--|  |
-//
-// PWM Frequency is F_CLK / (2^BITS)
-module PWM #(parameter BITS = 8)
-(
-    input            clk,
-    input [BITS-1:0] level,
-    output           pwm
-);
-    reg [BITS-1:0] counter = 0;
-
-    always @(posedge clk) begin
-        counter <= counter + 1;
-    end
-
-    assign pwm = (counter < level);
-    // assign pwm = 0;
 
 endmodule

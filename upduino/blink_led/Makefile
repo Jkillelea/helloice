@@ -2,7 +2,7 @@
 # to use sudo to flash the bit file.
 
 MAIN := rgb_blink
-CORE_SOURCE := $(MAIN).v sawtooth.v
+CORE_SOURCE := $(MAIN).v sawtooth.v pwm.v
 BSP_SOURCE  := upduino.v
 SIM_SOURCE  := gtkwave.v
 PCF := ../upduino.pcf
@@ -17,11 +17,14 @@ $(MAIN).asc: $(MAIN).blif $(PCF)
 $(MAIN).blif: $(CORE_SOURCE) $(BSP_SOURCE)
 	yosys -q -p "synth_ice40 -blif $(MAIN).blif" $^
 
-gtkwave: test.vcd
+gtkwave: test.fst
 	gtkwave $<
 
 test.vcd: design
 	vvp $<
+
+test.fst: design
+	vcd2fst -v $@ -f $^
 
 design: $(SIM_SOURCE) $(CORE_SOURCE)
 	iverilog -o $@ $^
@@ -39,4 +42,5 @@ clean:
 	$(RM) -f $(MAIN).blif $(MAIN).asc $(MAIN).bin
 	$(RM) -f design
 	$(RM) -f test.vcd
+	$(RM) -f test.fst
 

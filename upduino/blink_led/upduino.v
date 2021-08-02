@@ -73,7 +73,8 @@ module Upduino (
     wire pwm_green;
 
     rgb_blink #(
-        .PRESCALER(16)
+        .COUNTER_BITS(16),
+        .PRESCALER(10)
     ) blinker (
         clk,
         pwm_red,
@@ -81,9 +82,45 @@ module Upduino (
         pwm_green
     );
 
-    assign gpio_2  = pwm_red;
-    assign gpio_46 = pwm_green;
-    assign gpio_47 = pwm_blue;
+
+    SB_IO #(
+        // See Input and Output Pin Function Tables.
+        // Default value of PIN_TYPE = 6’000000 i.e. // an input pad, with the input signal
+        // registered.
+        .PIN_TYPE(6'b0110_01), // simple input-output pin
+
+        // By default, the IO will have NO pull up.
+        // This parameter is used only on bank 0, 1,
+        // and 2. Ignored when it is placed at bank 3
+        .PULLUP(1'b0) 
+
+        // Specify the polarity of all FFs in the IO to
+        // be falling edge when NEG_TRIGGER = 1.
+        // Default is rising edge.
+        // .NEG_TRIGGER(1'b0),
+
+        // Other IO standards are supported in bank 3
+        // only: SB_SSTL2_CLASS_2, SB_SSTL2_CLASS_1,
+        // SB_SSTL18_FULL, SB_SSTL18_HALF, SB_MDDR10,
+        // SB_MDDR8, SB_MDDR4, SB_MDDR2 etc.
+        // .IO_STANDARD("SB_LVCMOS"),
+    ) led_pins [2:0] (
+        .PACKAGE_PIN ({gpio_2, gpio_46, gpio_47}),  // User’s Pin signal name
+        // .LATCH_INPUT_VALUE (latch_input_value),  // Latches holds the Input value
+        // .CLOCK_ENABLE (clock_enable),            // Clock Enable common to input and output clock
+        // .INPUT_CLK (input_clk),                  // Clock for the input registers
+        .OUTPUT_CLK (clk),                          // Clock for the output registers
+        .OUTPUT_ENABLE (1'b1),                      // Output Pin Tristate Enable control
+        .D_OUT_0 ({pwm_red, pwm_green, pwm_blue}),  // Data 0 – out to Pin Rising clk edge
+        .D_OUT_1 ({pwm_red, pwm_green, pwm_blue})   // Data 1 - out to Pin Falling clk edge
+        // .D_IN_0 (),                              // Data 0 - Pin input Rising clk edge
+        // .D_IN_1 ()                               // Data 1 – Pin input Falling clk edge
+    ) /* synthesis DRIVE_STRENGTH= x2 */;
+
+
+    // assign gpio_2  = pwm_red;
+    // assign gpio_46 = pwm_green;
+    // assign gpio_47 = pwm_blue;
 
     // Instantiate RGB primitive
     SB_RGBA_DRV RGB_DRIVER (

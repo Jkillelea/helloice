@@ -74,14 +74,23 @@ module GtkWave ();
     wire pwm_blue;
     wire pwm_green;
 
-    rgb_blink #(.PRESCALER(4)) blinker (clk, pwm_red, pwm_blue, pwm_green);
+    rgb_blink #(
+        .COUNTER_BITS(16),
+        .PRESCALER(3)
+    ) blinker (
+        clk,
+        pwm_red,
+        pwm_blue,
+        pwm_green
+    );
+
 
     initial begin
         $dumpfile("test.vcd");
         $dumpvars(0, GtkWave);
         $display("starting...");
 
-        #1000000
+        #50000000
         $display("done.");
         $finish;
     end
